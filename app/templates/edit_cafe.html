@@ -8,7 +8,7 @@
   <tr><td></td><td><input type="submit" value="Skapa/Uppdatera"></td></tr>
 </table>
 <ul>
-  {% for product in Product.query.all() %}
+  {% for product in cafe.products %}
     <li>{{product}}</li>
   {% endfor %}
 </ul>

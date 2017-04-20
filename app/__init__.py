@@ -8,6 +8,8 @@ ALLOWED_EXTENSIONS = set(['png','jpg','jpeg'])
 
 app = Flask(__name__)
 
+app.secret_key = 'godis'
+
 app.config.from_object('config')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS

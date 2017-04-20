@@ -42,13 +42,13 @@ def new_product():
                     price=request.form['price'],
                     active=True
                     )
+                db.session.add(newProduct)
+                db.session.commit()
+                cafes = Cafe.query.filter(Cafe.id.in_([int(id) for id in request.form['cafes']])).all()
+                for cafe in cafes:
+                    cafe.addProduct(newProduct)
             except AttributeError:
                 flash('No transparancy allowed at the moment')
-            db.session.add(newProduct)
-            db.session.commit()
-            cafes = Cafe.query.filter(Cafe.id._in(request.form['cafes'])).all()
-            for cafe in cafes:
-                cafe.addProduct(newProduct)
             return redirect(url_for('new_product'))
     return render_template(
         'product_listing.html',
@@ -99,6 +99,17 @@ def edit_product(id):
         cafes=Cafe.query.all()
     )
 
+@app.route('/delete_product', methods=['POST'])
+def delete_product():
+    id = int(request.form['delete_id'])
+    product = Product.query.get_or_404(id)
+    db.session.delete(product)
+    db.session.commit()
+    return render_template(
+        'product_listing.html',
+        products=Product.query.all(),
+        cafes=Cafe.query.all()
+        )
 @app.route('/cafe/<int:id>')
 def cafe(id=0):
     if id == 0:

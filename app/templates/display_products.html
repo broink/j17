@@ -12,17 +12,17 @@
     $("#products").children().each(function(idx){
       var positions = start_end();
       if((idx+1) == $("#products").children().length){
-        $(this).animate({"left": positions[0]+positions[2], "top": positions[1]+positions[3]}) //Set start position
+        $(this).animate({"left": positions[2], "top": positions[3]}) //Set start position
         .delay(idx*displayTime*1.2)
         .fadeIn(displayTime/10, queue=false)
         .animate({ "left": positions[4], "top": positions[5]}, displayTime)
         .fadeOut(displayTime/10, queue=false, animera);
         //$(this).animate({"width": "+=3%", "height": "+=7%"}, "now");
       } else {
-        $(this).animate({"left": positions[0]+positions[2], "top": positions[1]+positions[3]}) //Set start position
+        $(this).animate({"left": positions[2], "top": positions[3]}) //Set start position
         .delay(idx*displayTime*1.2)
         .fadeIn(displayTime/10, queue=false)
-        .animate({ "left": positions[0]+positions[4], "top": positions[1]+positions[5]}, displayTime)
+        .animate({ "left": positions[4], "top": positions[5]}, displayTime)
         .fadeOut(displayTime/10, queue=false);
         //$(this).animate({"width": "+=150px", "height": "+=200px"}, "now");
       }

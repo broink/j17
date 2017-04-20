@@ -34,7 +34,7 @@
     </form>
   {% for product in products %}
     <h4>{{product.name}} {{product.price}} kr</h4>
-    <img src="{{url_for('get_product_photo', id=product.id)}}" width="600">
+    <img src="{{url_for('get_product_photo', id=product.id)}}" width="150">
     <p><a href="{{url_for('edit_product', id=product.id)}}">Redigera produkten</a></p>
   {% endfor %}
 </body>

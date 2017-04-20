@@ -83,5 +83,5 @@ class Cafe(db.Model):
         return '<Cafe %r>' % (self.name)
 
     def addProduct(self, product):
-        self.products.add(product)
+        self.products.append(product)
         db.session.commit()

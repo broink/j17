@@ -21,7 +21,7 @@
     <td>
       <select multiple size="3">
         {% for cafe in cafes %}
-          <option value="{{cafe.id}}" {% if id in cafe.products %} selected {% endif %}>{{cafe.name}}</option>
+          <option value="{{cafe.id}}" {% if product in cafe.products %} selected {% endif %}>{{cafe.name}}</option>
         {% endfor %}
       </select>
     </td>
@@ -36,4 +36,11 @@
     <td><input type=submit value=Skapa></td>
   </tr>
   </table>
+  </form>
+  <hr>
+  <h3 color="red">Ta bort produkten?</h3>
+  <p>OBS! Detta går ej att ångra!</p>
+  <form action="{{url_for('delete_product')}}" method="post">
+    <input type="hidden" name="delete_id" value="{{product.id}}">
+    <input type="submit" value="Ta bort produkten">
   </form>
