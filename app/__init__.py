@@ -4,7 +4,7 @@ from flask_login import LoginManager
 
 
 UPLOAD_FOLDER = 'tmp/'
-ALLOWED_EXTENSIONS = set(['png'])
+ALLOWED_EXTENSIONS = set(['png','jpg','jpeg'])
 
 app = Flask(__name__)
 

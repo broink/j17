@@ -8,11 +8,11 @@
     <td><input type="text" name="name" value="{{product.name}}"></td>
   </tr>
   <tr>
-    <td><p>Produktens pris: </p></td>
+    <td><p>Produktens pris (jämna 5): </p></td>
     <td><input type="number" name="price" step="5" value="{{product.price}}"></td>
   </tr>
   <tr>
-    <td><p>Bild på produkten<br>OBS! Endast .png</p><img src="{{url_for('get_product_photo', id=product.id)}}"></td>
+    <td><p>Bild på produkten. Får ej vara transparent</p><img src="{{url_for('get_product_photo', id=product.id)}}"></td>
     <td><input type=file name=file></td>
   </tr>
   {#<tr>

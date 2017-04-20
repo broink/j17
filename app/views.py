@@ -22,24 +22,33 @@ def index():
 # Helper function for uploads
 
 def allowed_file(filename):
+    print(filename.rsplit('.',1)[1])
     return '.' in filename and filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 @app.route('/new_product', methods=['GET','POST'])
 def new_product():
     if request.method == 'POST':
+        print('1')
         file = request.files['file']
+        print('2', file.filename)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print(file.__dict__)
-            newProduct = Product(
-                name=request.form['name'],
-                picture=file.stream.getvalue(),
-                price=request.form['price'],
-                active=True
-                )
+            try:
+                newProduct = Product(
+                    name=request.form['name'],
+                    picture=file.stream.getvalue(),
+                    price=request.form['price'],
+                    active=True
+                    )
+            except AttributeError:
+                flash('No transparancy allowed at the moment')
             db.session.add(newProduct)
             db.session.commit()
+            cafes = Cafe.query.filter(Cafe.id._in(request.form['cafes'])).all()
+            for cafe in cafes:
+                cafe.addProduct(newProduct)
             return redirect(url_for('new_product'))
     return render_template(
         'product_listing.html',
@@ -99,7 +108,7 @@ def cafe(id=0):
         if cafe is None:
             flash('Inget cafe finns med id ' + str(id))
             return index()
-        return render_template('display_products', cafe=cafe)
+        return render_template('display_products.html', cafe=cafe)
 
 @app.route('/cafe/<int:id>/edit', methods=['GET','POST'])
 def edit_cafe(id):

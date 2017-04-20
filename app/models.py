@@ -2,6 +2,21 @@ from app import db
 
 from flask import jsonify, url_for
 
+product_association_table = db.Table(
+    'product_association_table',
+    db.Model.metadata,
+    db.Column(
+        'cafe_id',
+        db.Integer,
+        db.ForeignKey('cafe.id')
+    ),
+    db.Column(
+        'product_id',
+        db.Integer,
+        db.ForeignKey('product.id')
+    )
+)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -39,6 +54,11 @@ class Product(db.Model):
     price = db.Column(db.Integer)
     picture = db.Column(db.BLOB)
     active = db.Column(db.Boolean)
+    cafes = db.relationship(
+        'Cafe',
+        secondary=product_association_table,
+        back_populates='products'
+    )
 
     def __repr__(self):
         return '<Product %r>' % (self.name)
@@ -53,7 +73,15 @@ class Product(db.Model):
 class Cafe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
-    products = db.Column(db.Integer, db.ForeignKey('product.id'))
+    products = db.relationship(
+        'Product',
+        secondary=product_association_table,
+        back_populates='cafes'
+    )
 
     def __repr__(self):
         return '<Cafe %r>' % (self.name)
+
+    def addProduct(self, product):
+        self.products.add(product)
+        db.session.commit()

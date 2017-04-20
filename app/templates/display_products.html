@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>Produktpresenterare - {{cafe.name}}</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jcanvas/16.7.3/jcanvas.min.js"></script>
+  <script>
+  var displayTime = 8000;
+  $(document).ready(function(){
+    animera();
+  });
+  function animera(){
+    $("#products").children().each(function(idx){
+      var positions = start_end();
+      if((idx+1) == $("#products").children().length){
+        $(this).animate({"left": positions[0]+positions[2], "top": positions[1]+positions[3]}) //Set start position
+        .delay(idx*displayTime*1.2)
+        .fadeIn(displayTime/10, queue=false)
+        .animate({ "left": positions[4], "top": positions[5]}, displayTime)
+        .fadeOut(displayTime/10, queue=false, animera);
+        //$(this).animate({"width": "+=3%", "height": "+=7%"}, "now");
+      } else {
+        $(this).animate({"left": positions[0]+positions[2], "top": positions[1]+positions[3]}) //Set start position
+        .delay(idx*displayTime*1.2)
+        .fadeIn(displayTime/10, queue=false)
+        .animate({ "left": positions[0]+positions[4], "top": positions[1]+positions[5]}, displayTime)
+        .fadeOut(displayTime/10, queue=false);
+        //$(this).animate({"width": "+=150px", "height": "+=200px"}, "now");
+      }
+    });
+  }
+  function start_end(){
+    centerY = $(window).height()/2;
+    centerX = $(window).width()/2;
+
+    var startY = Math.random()*300;
+    var startX = Math.random()*400;
+    var endY = Math.random()*300;
+    var endX = Math.random()*400;
+
+    return [centerX,centerY,startX,startY,endX,endY];
+  }
+  </script>
+</head>
+<body>
+  <h1>Presenterar produkter för {{cafe.name}}</h1>
+  <p id="info">det 'är ' <span id="counter"></span> animeringar kvar</p>
+  <div id="products">
+    {% for product in cafe.products %}
+      <div id="product_{{product.id}}" class="product" style="display: none; position: absolute; width: 800; height: 600; outline: 5px solid transparent">
+        <p id="{{product.id}}_name" class="product_name">{{product.name}}</p>
+        <p id="{{product.id}}_price" class="product_price">{{product.price}}</p>
+        <img id="{{product.id}}_img" class="product_image" width=600 src="{{url_for('get_product_photo', id=product.id)}}"></li>
+      </div>
+    {% endfor %}
+  </div>
+</body>
+<script>
+</script>
+</html>

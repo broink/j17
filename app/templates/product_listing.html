@@ -1,5 +1,6 @@
 <html>
 <body>
+  <h3><a href="{{url_for('index')}}">Tillbaka</a></h3>
     <h1>Skapa ny produkt</h1>
     <form action="" method=post enctype=multipart/form-data>
       <table>
@@ -8,17 +9,17 @@
         <td><input type="text" name="name"></td>
       </tr>
       <tr>
-        <td><p>Produktens pris: </p></td>
+        <td><p>Produktens pris (jämna 5): </p></td>
         <td><input type="number" name="price" step="5"></td>
       </tr>
       <tr>
-        <td><p>Bild på produkten<br>OBS! Endast .png</p></td>
+        <td><p>Bild på produkten. Får ej vara transparent</p></td>
         <td><input type=file name=file></td>
       </tr>
       <tr>
         <td><p> Välj caféer som har produkten till detta pris</p></td>
         <td>
-          <select multiple size="3">
+          <select name="cafes" multiple size="3">
             {% for cafe in cafes %}
               <option value="{{cafe.id}}">{{cafe.name}}</option>
             {% endfor %}
@@ -32,8 +33,8 @@
     </table>
     </form>
   {% for product in products %}
-    <h4>{{product.name}} - {{product.price}}</h4>
-    <img src="{{url_for('get_product_photo', id=product.id)}}">
+    <h4>{{product.name}} {{product.price}} kr</h4>
+    <img src="{{url_for('get_product_photo', id=product.id)}}" width="600">
     <p><a href="{{url_for('edit_product', id=product.id)}}">Redigera produkten</a></p>
   {% endfor %}
 </body>
