@@ -1,0 +1,40 @@
+<html>
+<body>
+    <h1>Skapa ny produkt</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <table>
+      <tr>
+        <td><p>Produktens namn: </p></td>
+        <td><input type="text" name="name"></td>
+      </tr>
+      <tr>
+        <td><p>Produktens pris: </p></td>
+        <td><input type="number" name="price" step="5"></td>
+      </tr>
+      <tr>
+        <td><p>Bild på produkten<br>OBS! Endast .png</p></td>
+        <td><input type=file name=file></td>
+      </tr>
+      <tr>
+        <td><p> Välj caféer som har produkten till detta pris</p></td>
+        <td>
+          <select multiple size="3">
+            {% for cafe in cafes %}
+              <option value="{{cafe.id}}">{{cafe.name}}</option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type=submit value=Skapa></td>
+      </tr>
+    </table>
+    </form>
+  {% for product in products %}
+    <h4>{{product.name}} - {{product.price}}</h4>
+    <img src="{{url_for('get_product_photo', id=product.id)}}">
+    <p><a href="{{url_for('edit_product', id=product.id)}}">Redigera produkten</a></p>
+  {% endfor %}
+</body>
+</html>

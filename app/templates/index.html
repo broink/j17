@@ -1,0 +1,18 @@
+<html>
+<h1>Produktpresenteraren för J17</h1>
+<h2>Presentera produkter hos ert cafe:</h2>
+<ul>
+  {% for cafe in cafes %}
+  <li><a href="{{url_for('cafe', id=cafe.id)}}">{{cafe.name}}</a></li>
+  {% endfor %}
+</ul>
+<h2>Administration</h2>
+<ul>
+  <li><a href="{{url_for('new_product')}}">Lista och redigera produkter</a></li>
+  <li>Redigera cafeer<ul>
+    {% for cafe in cafes %}
+      <li><a href="{{url_for('edit_cafe', id=cafe.id)}}">{{cafe.name}}</a></li>
+    {% endfor %}
+  </ul></li>
+</ul>
+</html>

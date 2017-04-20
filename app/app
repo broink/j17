@@ -1,0 +1,17 @@
+import os
+from flask import Flask
+
+app = Flask(__name__)
+app.config.from_object(os.environ['APP_SETTINGS'])
+
+@app.route('/')
+def main():
+    return "hellooo"
+
+
+if __name__ == '__main__':
+    print('Starting with config ' + os.environ['APP_SETTINGS'])
+    print('DEBUG:', str(app.config['DEBUG']))
+    print('DEVELOPMENT:', str(app.config['DEVELOPMENT']))
+    print('TESTING:', str(app.config['TESTING']))
+    app.run()

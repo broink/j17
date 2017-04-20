@@ -1,0 +1,11 @@
+<html>
+<form action="" method="POST">
+{% if cafe is none %}
+<p>Inget cafe hittades med id {{attempted_id}}, skapa ett nytt cafe?</p>
+{% endif %}
+<table>
+  <tr><td>Namn:</td><td><input type="text" name="name" value="{{cafe.name}}"></td></tr>
+  <tr><td></td><td><input type="submit" value="Skapa/Uppdatera"></td></tr>
+</table>
+</form>
+</html>

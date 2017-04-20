@@ -1,0 +1,39 @@
+<html>
+<h3><a href="{{url_for('new_product')}}">Tillbaks</a></h3>
+<h1>Redigera produkt</h1>
+<form action="" method="POST">
+  <table>
+  <tr>
+    <td><p>Produktens namn: </p></td>
+    <td><input type="text" name="name" value="{{product.name}}"></td>
+  </tr>
+  <tr>
+    <td><p>Produktens pris: </p></td>
+    <td><input type="number" name="price" step="5" value="{{product.price}}"></td>
+  </tr>
+  <tr>
+    <td><p>Bild på produkten<br>OBS! Endast .png</p><img src="{{url_for('get_product_photo', id=product.id)}}"></td>
+    <td><input type=file name=file></td>
+  </tr>
+  {#<tr>
+    <td><p> Välj caféer som har produkten till detta pris</p>
+    <p>OBS! MÅSTE VÄLJAS!</p></td>
+    <td>
+      <select multiple size="3">
+        {% for cafe in cafes %}
+          <option value="{{cafe.id}}" {% if id in cafe.products %} selected {% endif %}>{{cafe.name}}</option>
+        {% endfor %}
+      </select>
+    </td>
+  </tr>#}
+  <tr>
+    <td colspan=2>Aktiverad<input name="active" type="checkbox"
+       {% if product.active %} checked {% endif %}>
+     </td>
+   </tr>
+  <tr>
+    <td></td>
+    <td><input type=submit value=Skapa></td>
+  </tr>
+  </table>
+  </form>
