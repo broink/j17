@@ -2,13 +2,66 @@
 <head>
   <title>Produktpresenterare - {{cafe.name}}</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jcanvas/16.7.3/jcanvas.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<style>
+	body {
+		background: #222;
+	}
+	.row.content {
+		height: 85%;
+	}
+	header {
+		height: 10%
+	}
+	footer {
+		height: 5%;
+		background-color: #622;
+		color: white;
+		padding: 15px
+	}
+	h1 {
+		font:42px/44px 'scouternadinpro-medium-webfont', Arial, Helvetica, sans-serif;
+		font-size: 46;
+		color: white;
+	}
+	.aventyr {
+		background-color: #CA542A;
+		color: white;
+	}
+</style>
   <script>
   var displayTime = 8000;
+  var cafe_id = {{cafe.id}};
   $(document).ready(function(){
     animera();
   });
-  function animera(){
+  function load_products(){
+	//Loads all products, caches them and looks for updates every minute.
+   	var products = [];
+	$.getJSON( "{{url_for('api_get_cafe', id=cafe.id)}}", function( data ){
+			console.log(data.product_ids);
+			$.each(data.product_ids, function(i,val){
+				console.log(val)
+				$.getJSON( "/api/product/"+val, function( data ){
+					console.log(data);
+					products.push(data);
+				});
+			});
+		});
+	console.log(products);
+  }
+	var products = load_products();
+function animera(products){
+	$("#products").html(products);
+}
+  function animera_old(){
     $("#products").children().each(function(idx){
       var positions = start_end();
       if((idx+1) == $("#products").children().length){
@@ -41,18 +94,33 @@
   }
   </script>
 </head>
-<body>
-  <h1>Presenterar produkter för {{cafe.name}}</h1>
-  <p id="info">det 'är ' <span id="counter"></span> animeringar kvar</p>
-  <div id="products">
+<body class="aventyr">
+<header>
+<h1>hej hej</h1>
+</header>
+<div class="container-fluid">
+	<div class="row content">
+		<div class="col-sm-9" id="products">
     {% for product in cafe.products %}
       <div id="product_{{product.id}}" class="product" style="display: none; position: absolute; width: 800; height: 600; outline: 5px solid transparent">
         <p id="{{product.id}}_name" class="product_name">{{product.name}}</p>
         <p id="{{product.id}}_price" class="product_price">{{product.price}}</p>
-        <img id="{{product.id}}_img" class="product_image" width=600 src="{{url_for('get_product_photo', id=product.id)}}"></li>
+        <img id="{{product.id}}_img" class="product_image" width=600 height=400 src="{{url_for('get_product_photo', id=product.id)}}"></li>
       </div>
     {% endfor %}
-  </div>
+		</div>
+		<div class="col-sm-3">
+{% for product in cafe.products %}
+	<div class="col-sm-12">
+		{{product.name}}: {{product.price}}kr
+	</div>
+{% endfor %}
+		</div>
+	</div>
+</div>
+<footer class="container-fluid">
+  <p>footer - produktpresenteraren v0.01 - Av Jesper Björkman</p>
+</footer>
 </body>
 <script>
 </script>

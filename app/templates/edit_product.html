@@ -1,7 +1,7 @@
 <html>
 <h3><a href="{{url_for('new_product')}}">Tillbaks</a></h3>
 <h1>Redigera produkt</h1>
-<form action="" method="POST">
+<form action="" method="POST" enctype="multipart/form-data">
   <table>
   <tr>
     <td><p>Produktens namn: </p></td>
@@ -13,7 +13,7 @@
   </tr>
   <tr>
     <td><p>Bild på produkten. Får ej vara transparent</p><img src="{{url_for('get_product_photo', id=product.id)}}"></td>
-    <td><input type=file name=file></td>
+    <td><input type=file name="file"></td>
   </tr>
   {#<tr>
     <td><p> Välj caféer som har produkten till detta pris</p>

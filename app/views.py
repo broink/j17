@@ -1,7 +1,7 @@
 import os
 import io
 
-from flask import render_template, flash, redirect, session, url_for, request, g, make_response
+from flask import render_template, flash, redirect, session, url_for, request, g, make_response, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 
 from werkzeug import secure_filename
@@ -34,17 +34,18 @@ def new_product():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            print(file.__dict__)
             try:
                 newProduct = Product(
                     name=request.form['name'],
-                    picture=file.stream.getvalue(),
+                    #picture=file.stream.getvalue(), #cannot store transparent bytes
+                    filename=filename,
                     price=request.form['price'],
                     active=True
                     )
                 db.session.add(newProduct)
                 db.session.commit()
                 cafes = Cafe.query.filter(Cafe.id.in_([int(id) for id in request.form['cafes']])).all()
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(newProduct.id)+filename.split('.')[-1]))
                 for cafe in cafes:
                     cafe.addProduct(newProduct)
             except AttributeError:
@@ -56,15 +57,17 @@ def new_product():
         cafes=Cafe.query.all()
         )
 
-@app.route('/product_photos/<int:id>.png')
+@app.route('/product_photos/<int:id>')
 def get_product_photo(id):
     '''
     Returns image with the provided ID.
     '''
-    picture = Product.query.get_or_404(id).picture
-    response = make_response(picture)
-    response.headers['Content-Type'] = 'image/png'
-    return response
+    #picture = Product.query.get_or_404(id).picture
+    #response = make_response(picture)
+    #response.headers['Content-Type'] = 'image/png'
+    #return response
+    product = Product.query.get_or_404(id)
+    return send_from_directory('/'.join(app.root_path.split('/')[:-1])+'/'+app.config['UPLOAD_FOLDER'], product.filename)
 
 @app.route('/product/<int:id>')
 def get_product(id):
@@ -76,16 +79,24 @@ def edit_product(id):
     product = Product.query.get_or_404(id)
 
     if request.method == 'POST':
+        print(request.form.__dict__)
         if product.name != request.form['name']:
             product.name = request.form['name']
+        if 'file' not in request.files:
+            print('no file uploaded')
         try:
             file = request.files['file']
         except:
             file = None
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            product.picture = file.stream.getvalue()
+            print(filename)
+            try:
+                os.remove(app.config['UPLOAD_FOLDER'], product.filename)
+            except:
+                pass
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(id)+filename.split('.')[-1]))
+            product.filename =  str(id)+filename.split('.')[-1]
         if product.price != request.form['price']:
             product.price = request.form['price']
         if request.form.get('active'):
@@ -135,3 +146,18 @@ def edit_cafe(id):
             cafe.name = request.form['name']
             db.session.commit()
     return render_template('edit_cafe.html', cafe=cafe, attempted_id=id)
+
+
+# API-like functionality
+@app.route('/api/cafe/<int:id>')
+def api_get_cafe(id):
+    cafe = Cafe.query.get_or_404(id)
+    return cafe.to_json()
+
+@app.route('/api/product/<int:id>')
+def api_get_product(id):
+    product = Product.query.get_or_404(id)
+    return product.to_json()
+
+
+

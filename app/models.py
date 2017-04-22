@@ -52,7 +52,8 @@ class Product(db.Model):
     name = db.Column(db.String(128))
     descr = db.Column(db.Text)
     price = db.Column(db.Integer)
-    picture = db.Column(db.BLOB)
+    #picture = db.Column(db.BLOB)
+    filename = db.Column(db.String(128))
     active = db.Column(db.Boolean)
     cafes = db.relationship(
         'Cafe',
@@ -85,3 +86,10 @@ class Cafe(db.Model):
     def addProduct(self, product):
         self.products.append(product)
         db.session.commit()
+
+    def to_json(self):
+        return jsonify({
+            'name': self.name,
+            'id': self.id,
+            'product_ids': [product.id for product in self.products]
+        })

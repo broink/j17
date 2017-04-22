@@ -2,11 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
+STATIC_FOLDER = 'static/'
 
-UPLOAD_FOLDER = 'tmp/'
+UPLOAD_FOLDER = 'static/img/products/'
 ALLOWED_EXTENSIONS = set(['png','jpg','jpeg'])
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static/')
 
 app.secret_key = 'godis'
 
