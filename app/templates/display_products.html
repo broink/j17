@@ -24,7 +24,7 @@
 		height: 5%;
 		background-color: #622;
 		color: white;
-		padding: 15px
+		padding-top: 15px
 	}
 	h1 {
 		font:42px/44px 'scouternadinpro-medium-webfont', Arial, Helvetica, sans-serif;
@@ -35,66 +35,73 @@
 		background-color: #CA542A;
 		color: white;
 	}
+	body {
+		overflow: hidden;
+	}
 </style>
   <script>
   var displayTime = 8000;
   var cafe_id = {{cafe.id}};
 $(document).ready(function(){
-	var products = load_products();
+	load_products();
+	setTimeout(function(){
+		animera();
+	},1000);
+window.setInterval(function(){
+	load_products();
+}, 10000);
 });
+   	var products = [];
   function load_products(){
 	//Loads all products, caches them and looks for updates every minute.
-   	var products = [];
 	$.getJSON( "{{url_for('api_get_cafe', id=cafe.id)}}", function( data ){
-			console.log(data.product_ids);
 			$.each(data.product_ids, function(i,val){
 				console.log(val)
+				// Only add it if it doesn't exist
+				if($("#product_"+val).length == 0){
+		//TODO: This can never update a product, nor remove one.
 				$.getJSON( "/api/product/"+val, function( data ){
-					console.log(data);
 					products.push(data);
+				//Put the product in the slideshow if it is active
+					if(data.active){
+			
+					$("#products").append(
+	"<div id='product_"+val+"' style=\"display: none\"><p class=\"product_name\">"+data.name+"</p><p class=\"product_price\">"+data.price+" kr</p><img src=\""+data.picture_url+"\" class=\"product_image\"></div>");
+				// Also put it in the list of products
+				$("#all_products").append("<div class=\"col-sm-12\" id=\"list_"+val+"\"><p class=\"list_name\">"+data.name+" "+data.price+" kr</p></div>");
+					}
 				});
+				}
 			});
-		})
-	.done(animera(products));
+			});
   }
-function animera(products){
-	$( "#all_products" )
-	$.each(products, function(){
-		console.log($(this));
-		
+
+function animera(){
+	$("#products").children().each(function(idx, product){
+	//animate the slideshow
+		$(this).delay(displayTime*idx)
+		.fadeIn(displayTime*0.05, queue=false)
+		.delay(displayTime*0.89)
+		.fadeOut(displayTime*0.05, queue=false);
+
+	//resize the image to fit.
+	/*
+		We want to keep the aspect ratio
+		We want the image to be of max width = 90% of the containing div
+		We want the image to be of max height = 90% of the containing div
+	*/
+		$(this).children("img").css('height', '60%');
+
+	//retrigger the animation loop	
+		if((idx+1) == $("#products").children().length){
+			console.log("last product");
+			setTimeout(function(){
+				animera();
+			},displayTime*(idx+1));
+			//$(this).delay(1000,animera);
+		}	
 	});
 }
-  function animera_old(){
-    $("#products").children().each(function(idx){
-      var positions = start_end();
-      if((idx+1) == $("#products").children().length){
-        $(this).animate({"left": positions[2], "top": positions[3]}) //Set start position
-        .delay(idx*displayTime*1.2)
-        .fadeIn(displayTime/10, queue=false)
-        .animate({ "left": positions[4], "top": positions[5]}, displayTime)
-        .fadeOut(displayTime/10, queue=false, animera);
-        //$(this).animate({"width": "+=3%", "height": "+=7%"}, "now");
-      } else {
-        $(this).animate({"left": positions[2], "top": positions[3]}) //Set start position
-        .delay(idx*displayTime*1.2)
-        .fadeIn(displayTime/10, queue=false)
-        .animate({ "left": positions[4], "top": positions[5]}, displayTime)
-        .fadeOut(displayTime/10, queue=false);
-        //$(this).animate({"width": "+=150px", "height": "+=200px"}, "now");
-      }
-    });
-  }
-  function start_end(){
-    centerY = $(window).height()/2;
-    centerX = $(window).width()/2;
-
-    var startY = Math.random()*300;
-    var startX = Math.random()*400;
-    var endY = Math.random()*300;
-    var endX = Math.random()*400;
-
-    return [centerX,centerY,startX,startY,endX,endY];
-  }
   </script>
 </head>
 <body class="aventyr">

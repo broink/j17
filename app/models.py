@@ -68,7 +68,8 @@ class Product(db.Model):
         return jsonify({
             'name': self.name,
             'price': self.price,
-            'picture_url': str(url_for('get_product_photo', id=self.id))
+            'picture_url': str(url_for('get_product_photo', id=self.id)),
+            'active': self.active
         })
 
 class Cafe(db.Model):
